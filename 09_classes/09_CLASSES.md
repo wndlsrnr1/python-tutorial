@@ -24,3 +24,38 @@ alias = original
 alias.name = "Bob"
 print(original.name)
 ```
+
+
+
+9.2. Python Scopes and Namespaces
+Before introducing classes, I first have to tell you something about Python’s scope rules. Class definitions play some neat tricks with namespaces, and you need to know how scopes and namespaces work to fully understand what’s going on. Incidentally, knowledge about this subject is useful for any advanced Python programmer.
+
+Let’s begin with some definitions.
+
+A namespace is a mapping from names to objects. Most namespaces are currently implemented as Python dictionaries, but that’s normally not noticeable in any way (except for performance), and it may change in the future. Examples of namespaces are: the set of built-in names (containing functions such as abs(), and built-in exception names); the global names in a module; and the local names in a function invocation. In a sense the set of attributes of an object also form a namespace. The important thing to know about namespaces is that there is absolutely no relation between names in different namespaces; for instance, two different modules may both define a function maximize without confusion — users of the modules must prefix it with the module name.
+
+By the way, I use the word attribute for any name following a dot — for example, in the expression z.real, real is an attribute of the object z. Strictly speaking, references to names in modules are attribute references: in the expression modname.funcname, modname is a module object and funcname is an attribute of it. In this case there happens to be a straightforward mapping between the module’s attributes and the global names defined in the module: they share the same namespace!
+
+```
+from typing import List
+from functools import reduce
+class CalcBoring:
+    
+    @classmethod
+    def sum(cls, *args: List[int]):
+        results: int = 0
+        for i in args:
+            results += i
+        return results
+
+class CalcFancy:
+
+    @classmethod
+    def sum(cls, *args: List[int]):
+        # lambda 
+         return reduce(lambda x, y: x + y, args, 0)
+
+
+assert CalcBoring.sum(1, 2, 3, 4, 5) == CalcFancy.sum(1, 2, 3, 4, 5)
+```
+
