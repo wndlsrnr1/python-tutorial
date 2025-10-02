@@ -135,3 +135,37 @@ print(hi)
 
 # The global statement can be used to indicate that particular variables live in the global scope and sould be rebound there; the nonlocal statement indicates that particular variables live in a enclosing scope and should be rebound there.
 # ================================================
+# Scopes and Namesapces Example
+
+
+# This is an example demonstarting how to reference the different scopes and namespaces, and how global and nonlocal affect variable binding:
+def scope_test():
+    def do_local():
+        spam = "local spam"
+
+    def do_nonlocal():
+        nonlocal spam
+        spam = "nonlocal spam"
+
+    def do_global():
+        global spam
+        spam = "global spam"
+
+    spam = "test spam"
+    do_local()
+    print("After local assignment:", spam)
+    do_nonlocal()
+    print("After nonlocal assignment:", spam)
+    do_global()
+    print("In global scope: ", spam)
+
+
+scope_test()
+print("In global socope: ", spam)
+
+# The output of the example code is:
+
+# After local assignment: test spam
+# After nonlocal assignment: nonlocal spam
+# After global assignment: nonlocal spam
+# INglobal scope: global spam

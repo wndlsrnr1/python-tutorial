@@ -122,3 +122,46 @@ It is important to realize that scopes are determined textually: the global scop
 A special quirk of Python is that - if no global or nonlocal statement is in effect - assignments to names always go into the innermost scope. Assignments do not copy data - the just bind names to objects. The same is true for deletions: the statement del x removes the binding of x from the namespace referenced by local scope. In fact, all operations that introduce new names use the local scope: in particular, import statements and function definitions bind the module or function name in the local scope.
 
 The global statement can be used to indicate that particular variables live in the global scope and sould be rebound there; the nonlocal statement indicates that particular variables live in a enclosing scope and should be rebound there. 
+
+Scopes and Namesapces Example
+
+
+This is an example demonstarting how to reference the different scopes and namespaces, and how global and nonlocal affect variable binding:
+
+```
+def scope_test():
+    def do_local():
+        spam = "local spam"
+
+    def do_nonlocal():
+        nonlocal spam
+        spam = "nonlocal spam"
+
+    def do_global():
+        global spam
+        spam = "global spam"
+
+    spam = "test spam"
+    do_local()
+    print("After local assignment:", spam)
+    do_nonlocal()
+    print("After nonlocal assignment:", spam)
+    do_global()
+    print("In global scope: ", spam)
+
+
+scope_test()
+print("In global socope: ", spam)
+
+```
+
+The output of the example code is:
+
+After local assignment: test spam
+After nonlocal assignment: nonlocal spam
+After global assignment: nonlocal spam
+INglobal scope: global spam
+
+Note how the local assignment (which is default) didn't change scope_test's binding of spam. The nonlocal assignment changed scope_test's binding of spam, and the global assignemnt changed the module-lovel binding.
+
+You can also see that there was no previous binding for spam before the global assignment.
