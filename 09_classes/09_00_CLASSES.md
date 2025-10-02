@@ -59,3 +59,66 @@ class CalcFancy:
 assert CalcBoring.sum(1, 2, 3, 4, 5) == CalcFancy.sum(1, 2, 3, 4, 5)
 ```
 
+Attributes may be read-only or writable. In the letter case, assignment to attributes is possible. Module attributes are writable: you can write modname.the_answer = 42. Writable attributes may also be deleted with the del statement. For example, del modname.the_answer will remove the attribute the_answer from the object  named by modname.
+
+```
+hi = "check if it is deleted."
+
+print(hi)
+
+del hi
+
+try:
+    print(hi)
+except Exception as e:
+    print(e)
+```
+
+Namespaces are created at different moements and have different lifetimes. The namespace contianing the builit-in names is created when the Python interpreter start up, and is never deleted. The global namespace for a module is created when the module definition is read in; normally, module namepsaces also last until the interpreter quits. The statements executed by the top-level invocation of the interpreter, either read from a script file or interactively, are considered part of a module called __main__, so tehy have their own global namespace. 
+
+The local namespace for a function is created when the fucntion is called, and deleted when the function returns or raises an exception that is not handled within the fucntion. (Actually, forgetting would be a better way to describe what actually happnes.) Of cours, recursive invocations each have their own local namespace.
+
+A scope is a textual region of a Python program where a namespace is directly accessible. "Directly accessible" here means that an unqaualified reference to a name attempts to find the name in the namespace. 
+```
+#hi called in method cannot change global value. it is just make a another namespace
+
+hi = "hi"
+
+def hi_is_in_it():
+    print(hi)
+    hi: Any = None
+    print(hi)
+    return None
+
+def i_will_chang_hi_in_it():
+    global hi
+    hi = "HI"
+
+hi_is_in_it()
+
+try:
+    print(hi)
+except Exception as e:
+    print(e)
+
+i_will_chang_hi_in_it()
+
+print(hi)
+```
+
+Although scopes are determined statically, they are used dynamically. At any time during execution, there are 3 or 4 nested scopes whose namespaces are directly accessible:
+
+- the innermost scope, which is searched first, contains the local names
+- the scopes of any enclosing functions, which are searched starting with the nearest enclosing scope, contain non-local, but also non-global names
+- the next-to-last scope contains the current module's global names
+- the outermost scope (searched last) is the namespace containing builit-in names
+
+If a name is decalred global, then all references and assignments go directly to the next-to-last scope containing the module's global names. To rebind variables found outside of the innermost scope, the nonlocal statement can be used; if not decalred non local, those variables are read-only (an attempt to write to such a variable will simply create a new local variable in the innermost scope, leaving the identically named outer variable unchanged.)
+
+Usually, the local scope references the local names of the (textually) current function. Outside functions, the local scope references the same namespace as the global scope: the module's namespace. Class definitions place yet another namespace in the local scope.
+
+It is important to realize that scopes are determined textually: the global scope of a function defined in a module is done dynamically, at run time -- however, the language definition is evloing towards static name resolution, at "compile" time, so don't rely on dynamic name resolution! (In fact, local variables are already determined statically.)
+
+A special quirk of Python is that - if no global or nonlocal statement is in effect - assignments to names always go into the innermost scope. Assignments do not copy data - the just bind names to objects. The same is true for deletions: the statement del x removes the binding of x from the namespace referenced by local scope. In fact, all operations that introduce new names use the local scope: in particular, import statements and function definitions bind the module or function name in the local scope.
+
+The global statement can be used to indicate that particular variables live in the global scope and sould be rebound there; the nonlocal statement indicates that particular variables live in a enclosing scope and should be rebound there. 
